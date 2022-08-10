@@ -131,5 +131,3 @@ dmypy.json
 *.jpg
 *.txt
 *.csv
-*.json
-!example.json
