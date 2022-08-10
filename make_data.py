@@ -5,9 +5,6 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-FIG_DIR = "./figures"
-DATA_DIR = "./data"
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -25,8 +22,19 @@ def main():
 
     np.random.seed(args.seed)
 
+    dir_name = os.path.splitext(os.path.basename(args.conf_json))[0]
+    data_dir = f"./data/{dir_name}"
+    fig_dir = f"./figures/{dir_name}"
+
+    if not os.path.isdir(data_dir):
+        os.makedirs(data_dir)
+    if not os.path.isdir(fig_dir):
+        os.makedirs(fig_dir)
+
     with open(args.conf_json, "r") as f:
         confs = json.load(f)
+
+    count = 0
 
     for conf in confs:
         name = conf["name"]
@@ -39,20 +47,12 @@ def main():
         freq_mus = conf["freq_mus"]
         freq_devs = conf["freq_devs"]
 
-        data_dir = f"{DATA_DIR}/{name}"
-        fig_dir = f"{FIG_DIR}/{name}"
-
-        if not os.path.isdir(data_dir):
-            os.makedirs(data_dir)
-        if not os.path.isdir(fig_dir):
-            os.makedirs(fig_dir)
-
         fig = plt.figure()
 
         n_swav = len(amp_mus)
 
         t = np.linspace(0, dur, n_samp)
-        for i in range(n_data):
+        for _ in range(n_data):
             amps = np.random.normal(amp_mus, amp_devs)
             freqs = np.random.normal(freq_mus, freq_devs)
             phases = np.random.uniform(0, 2 * np.pi, n_swav)
@@ -69,11 +69,13 @@ def main():
             x += eps
 
             data = np.stack([t, x], axis=1)
-            np.savetxt(f"{data_dir}/{i:04}.csv", data, delimiter=",")
+            np.savetxt(f"{data_dir}/{count:04}.csv", data, delimiter=",")
 
             plt.plot(t, x)
-            plt.savefig(f"{fig_dir}/{i:04}.jpg")
+            plt.savefig(f"{fig_dir}/{count:04}.jpg")
             plt.cla()
+
+            count += 1
 
     print("Done")
 
