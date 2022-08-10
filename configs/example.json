@@ -1,0 +1,13 @@
+[
+  {
+    "name":   "normal",
+    "n_data":     30,
+    "n_samp":     256,
+    "dur":        10,
+    "noise_dev":  0.1,
+    "amp_mus":    [1],
+    "amp_devs":   [0.1],
+    "freq_mus":   [1],
+    "freq_devs":  [0.1]
+  }
+]
