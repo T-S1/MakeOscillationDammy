@@ -5,7 +5,7 @@
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [1],
+    "amp_mus":    [1, 0.5],
     "amp_devs":   [0.1],
     "freq_mus":   [1],
     "freq_devs":  [0.1]
@@ -16,7 +16,7 @@
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [2],
+    "amp_mus":    [1.2],
     "amp_devs":   [0.1],
     "freq_mus":   [1],
     "freq_devs":  [0.1]
@@ -27,7 +27,7 @@
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [0.5],
+    "amp_mus":    [0.8],
     "amp_devs":   [0.1],
     "freq_mus":   [1],
     "freq_devs":  [0.1]
