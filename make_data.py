@@ -1,69 +1,79 @@
-import pdb; pdb.set_trace()
+# import pdb; pdb.set_trace()
+import argparse
 import os
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 
-txt_dir = "./data/normal"
-fig_dir = "./figures/normal"
-
-BASE_AMP = 1
-BASE_FREQ = 1
-
-AMP_SIGMA = 0.1
-FREQ_SIGMA = 0
-PHASE_SHIFT_SIGMA = 1
-
-NUM_DATA = 30
-TIME_LEN = 10
-SAMP_RATE = 30
-
-SEED = 200
+FIG_DIR = "./figures"
+DATA_DIR = "./data"
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "conf_json",
+        help="configuration json path",
+        type=str
+    )
+    parser.add_argument(
+        "--seed",
+        help="seed value",
+        type=int, default=100
+    )
+    args = parser.parse_args()
 
-    np.random.seed(SEED)
+    np.random.seed(args.seed)
 
-    if not os.path.isdir(txt_dir):
-        os.makedirs(txt_dir)
-    if not os.path.isdir(fig_dir):
-        os.makedirs(fig_dir)
+    with open(args.conf_json, "r") as f:
+        confs = json.load(f)
 
-    fig = plt.figure()
+    for conf in confs:
+        name = conf["name"]
+        n_data = conf["n_data"]
+        n_samp = conf["n_samp"]
+        dur = conf["dur"]
+        noise_dev = conf["noise_dev"]
+        amp_mus = conf["amp_mus"]
+        amp_devs = conf["amp_devs"]
+        freq_mus = conf["freq_mus"]
+        freq_devs = conf["freq_devs"]
 
-    NUM_SAMP = SAMP_RATE * TIME_LEN
+        data_dir = f"{DATA_DIR}/{name}"
+        fig_dir = f"{FIG_DIR}/{name}"
 
-    for i in range(NUM_DATA):
-        xs = np.zeros(NUM_SAMP)
-        ys = np.zeros(NUM_SAMP)
-        a = np.random.poisson(BASE_AMP)
-        f = np.random.poisson(BASE_FREQ)
-        b = 0
-        phi = np.random.normal(0, PHASE_SHIFT_SIGMA)
-        a_old = a
-        x_old = 0
-        for j in range(NUM_SAMP):
-            x = j / SAMP_RATE
-            y = a * np.sin(2 * np.pi * f * x + phi) + b
-            xs[j] = x
-            ys[j] = y
+        if not os.path.isdir(data_dir):
+            os.makedirs(data_dir)
+        if not os.path.isdir(fig_dir):
+            os.makedirs(fig_dir)
 
-            if x > x_old + 1 / (4 * f):
-                a = np.random.poisson(BASE_AMP)
-                f = np.random.poisson(BASE_FREQ)
-                dif = (np.sin(2 * np.pi * f * x + phi + np.pi / 2)
-                       - np.sin(2 * np.pi * f + phi))
-                if dif < 0:
-                    b -= a_old - a
-                else:
-                    b += a_old - a
-                x_old = x
+        fig = plt.figure()
 
-        np.savetxt(f"{txt_dir}/{i:05}.txt", ys)
+        n_swav = len(amp_mus)
 
-        plt.plot(xs, ys)
-        plt.savefig(f"{fig_dir}/{i:05}.jpg")
-        plt.cla()
+        t = np.linspace(0, dur, n_samp)
+        for i in range(n_data):
+            amps = np.random.normal(amp_mus, amp_devs)
+            freqs = np.random.normal(freq_mus, freq_devs)
+            phases = np.random.uniform(0, 2 * np.pi, n_swav)
+            eps = np.random.normal(0, noise_dev, n_samp)
+
+            x = np.zeros(n_samp)
+            for j in range(n_swav):
+                a = amps[j]
+                f = freqs[j]
+                phi = phases[j]
+
+                x += a * np.sin(2 * np.pi * f * t + phi)
+
+            x += eps
+
+            data = np.stack([t, x], axis=1)
+            np.savetxt(f"{data_dir}/{i:04}.csv", data, delimiter=",")
+
+            plt.plot(t, x)
+            plt.savefig(f"{fig_dir}/{i:04}.jpg")
+            plt.cla()
 
     print("Done")
 
