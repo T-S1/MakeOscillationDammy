@@ -1,5 +1,5 @@
 """モジュールのインポート"""
-import pdb; pdb.set_trace()
+# import pdb; pdb.set_trace()
 import numpy as np
 from scipy import signal
 from sklearn.cluster import KMeans
@@ -10,7 +10,7 @@ ms = np.zeros(n_data)
 
 for i in range(n_data):
     """データの読み込み"""
-    data = np.loadtxt(f"./data/example/{i:04}.csv", delimiter=",")
+    data = np.loadtxt(f"./data/example1/{i:04}.csv", delimiter=",")
     t = data[:, 0]
     x = data[:, 1]
 
@@ -58,10 +58,23 @@ for i in range(n_clusters):
 plt.show()
 
 """リアルタイムな異常検知"""
-np.random.seed(100)
-n_iter = 20
+data = np.loadtxt("./data/rt_example1.csv", delimiter=",")
+t = data[:, 0]
+x = data[:, 1]
+n_sampels = 4096
+n_window = 256
+clus_names = ["normal", "abnormal_1", "abnormal_2"]
 
+fig = plt.figure()
 
+for i in range(0, n_sampels, n_window):
+    x_abs = np.abs(x[i: i + n_window])
+    peaks, _ = signal.find_peaks(x_abs, prominence=0.3, width=5)
+    m_amp = np.mean(x_abs[peaks])
+    m_amp = np.array([[m_amp]])
+    label = kmeans.predict(m_amp)[0]
+    print(f"Now({t[i]} : {t[i + n_window - 1]})", clus_names[label])
 
-for i in range(n_iter):
-    x_new = np.loadtxt
+    plt.plot(t[i: i + n_window], x[i: i + n_window], c=colors[label])
+
+plt.show()
