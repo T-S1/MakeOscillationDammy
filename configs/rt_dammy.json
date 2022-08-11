@@ -1,9 +1,0 @@
-{
-  "ref_json": "./configs/example1",
-  "duration": 160,
-  "n_samples": 4096,
-  "n_clusters": 3,
-  "change_dur": 10,
-  "c_dur_dev": 1,
-  "c_probs": [0.8, 0.1, 0.1]
-}
