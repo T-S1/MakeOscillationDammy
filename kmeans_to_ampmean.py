@@ -37,7 +37,7 @@ for i in range(n_data):
 
 """k-meansの実行"""
 n_clusters = 3
-colors = ["r", "g", "b"]
+colors = ["g", "r", "b"]
 
 ms = ms.reshape(-1, 1)
 
@@ -61,20 +61,27 @@ plt.show()
 data = np.loadtxt("./data/rt_example1.csv", delimiter=",")
 t = data[:, 0]
 x = data[:, 1]
-n_sampels = 4096
+n_samples = 4096
 n_window = 256
+width = 500
+interval = 50
 clus_names = ["normal", "abnormal_1", "abnormal_2"]
 
 fig = plt.figure()
 
-for i in range(0, n_sampels, n_window):
-    x_abs = np.abs(x[i: i + n_window])
-    peaks, _ = signal.find_peaks(x_abs, prominence=0.3, width=5)
-    m_amp = np.mean(x_abs[peaks])
-    m_amp = np.array([[m_amp]])
-    label = kmeans.predict(m_amp)[0]
-    print(f"Now({t[i]} : {t[i + n_window - 1]})", clus_names[label])
-
-    plt.plot(t[i: i + n_window], x[i: i + n_window], c=colors[label])
+for i in range(1, n_samples):
+    if i % n_window == n_window - 1:
+        i_start = i - n_window + 1
+        x_abs = np.abs(x[i_start: i])
+        peaks, _ = signal.find_peaks(x_abs, prominence=0.3, width=5)
+        m_amp = np.mean(x_abs[peaks])
+        label = kmeans.predict([[m_amp]])[0]
+        plt.axvspan(t[i_start], t[i], color=colors[label])
+    if i % interval == 0:
+        ileft = max(0, i - width)
+        iright = max(width, i)
+        plt.xlim(t[ileft], t[iright])
+        plt.plot(t[i - interval: i + 1], x[i - interval: i + 1], color='k')
+        plt.pause(0.2)
 
 plt.show()
