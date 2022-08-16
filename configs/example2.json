@@ -1,35 +1,35 @@
 [
   {
     "name":   "normal",
-    "n_data":     30,
+    "n_data":     60,
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [1, 0.5],
+    "amp_mus":    [1],
     "amp_devs":   [0.1],
     "freq_mus":   [1],
-    "freq_devs":  [0.1]
+    "freq_devs":  [0]
   },
   {
     "name":   "abnormal_1",
-    "n_data":     10,
+    "n_data":     20,
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [1.2],
-    "amp_devs":   [0.1],
-    "freq_mus":   [1],
-    "freq_devs":  [0.1]
+    "amp_mus":    [0.6, 0.3, 0.1],
+    "amp_devs":   [0.1, 0.05, 0.05],
+    "freq_mus":   [1, 3, 5],
+    "freq_devs":  [0, 0, 0]
   },
   {
     "name":   "abnormal_2",
-    "n_data":     10,
+    "n_data":     20,
     "n_samp":     256,
     "dur":        10,
     "noise_dev":  0.1,
-    "amp_mus":    [0.8],
-    "amp_devs":   [0.1],
-    "freq_mus":   [1],
-    "freq_devs":  [0.1]
+    "amp_mus":    [0.2, 0.4, 0.2, 0.2],
+    "amp_devs":   [0.01, 0.01, 0.01, 0.01],
+    "freq_mus":   [0.5, 1, 1.5, 2],
+    "freq_devs":  [0, 0, 0, 0]
   }
 ]
