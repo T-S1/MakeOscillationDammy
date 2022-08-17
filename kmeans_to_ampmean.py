@@ -49,8 +49,6 @@ ms = ms.reshape(-1, 1)
 
 kmeans = KMeans(
     n_clusters,
-    n_init=10,
-    max_iter=300,
     random_state=100
 ).fit(ms)
 centers = kmeans.cluster_centers_
@@ -69,7 +67,7 @@ t = data[:, 0]
 x = data[:, 1]
 n_window = 256
 width = 500
-interval = 50
+interval = 32
 
 fig = plt.figure()
 
@@ -87,6 +85,8 @@ for i in range(len(x)):
         plt.xlim(t[i_left], t[i_right])
         i_start = i - interval + 1
         plt.plot(t[i_start: i + 2], x[i_start: i + 2], color='k')
-        plt.pause(0.2)
+        plt.pause(0.1)
 
+plt.xlim(t[0], t[-1])
+plt.savefig("./figures/rt_ampmean.jpg")
 plt.show()
