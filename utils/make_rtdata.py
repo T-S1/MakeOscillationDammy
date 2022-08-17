@@ -21,6 +21,7 @@ def main():
     args = parser.parse_args()
 
     np.random.seed(args.seed)
+    colors = ["g", "r", "b"]
 
     with open(args.rtconf_json, "r") as f:
         rtconf = json.load(f)
@@ -41,6 +42,8 @@ def main():
     for i in range(1, n_clus):
         cum_dist[i] = cum_dist[i-1] + c_probs[i]
 
+    fig = plt.figure()
+
     t_change = np.random.normal(c_dur_mu, c_dur_dev)
     phi = np.random.uniform(0, 2 * np.pi)
     rand_var = np.random.uniform(0, 1)
@@ -54,8 +57,10 @@ def main():
             freq_mus = conf["freq_mus"]
             freq_devs = conf["freq_devs"]
 
-            a = np.random.normal(amp_mus, amp_devs)
-            f = np.random.normal(freq_mus, freq_devs)
+            amps = np.random.normal(amp_mus, amp_devs)
+            freqs = np.random.normal(freq_mus, freq_devs)
+
+            plt.axvspan(0, t_change, color=colors[j])
             break
 
     ts = np.zeros(n_samp)
@@ -65,6 +70,7 @@ def main():
 
         if t > t_change:
             rand_var = np.random.uniform(0, 1)
+            t_change += np.random.normal(c_dur_mu, c_dur_dev)
 
             for j, th_rand in enumerate(cum_dist):
                 if rand_var < th_rand:
@@ -76,14 +82,16 @@ def main():
                     freq_mus = conf["freq_mus"]
                     freq_devs = conf["freq_devs"]
 
-                    a = np.random.normal(amp_mus, amp_devs)
-                    f = np.random.normal(freq_mus, freq_devs)
+                    amps = np.random.normal(amp_mus, amp_devs)
+                    freqs = np.random.normal(freq_mus, freq_devs)
+
+                    plt.axvspan(t, t_change, color=colors[j])
                     break
 
-            t_change += np.random.normal(c_dur_mu, c_dur_dev)
-
         eps = np.random.normal(0, noise_dev)
-        x[i] = a * np.sin(2 * np.pi * f * t + phi) + eps
+        for a, f in zip(amps, freqs):
+            x[i] += a * np.sin(2 * np.pi * f * t + phi)
+        x[i] += eps
         ts[i] = t
 
     bname = os.path.splitext(os.path.basename(args.rtconf_json))[0]
@@ -91,8 +99,8 @@ def main():
     data = np.stack([ts, x], axis=1)
     np.savetxt(f"./data/{bname}.csv", data, delimiter=",")
 
-    fig = plt.figure()
-    plt.plot(ts, x)
+    plt.plot(ts, x, color="k")
+    plt.xlim(ts[0], ts[-1])
     plt.savefig(f"./figures/{bname}.jpg")
 
     print("Done")
