@@ -1,5 +1,5 @@
 {
-  "ref_json": "./configs/example1.json",
+  "ref_json": "./configs/example2.json",
   "duration": 300,
   "n_samples": 7680,
   "n_clusters": 3,
