@@ -36,6 +36,12 @@ def main():
 
     count = 0
 
+    y_max = 0
+    for conf in confs:
+        amp_mus = conf["amp_mus"]
+        amp_devs = conf["amp_devs"]
+        y_max = max(y_max, np.sum(amp_mus + amp_devs * 3))
+
     for conf in confs:
         name = conf["name"]
         n_data = conf["n_data"]
@@ -72,6 +78,7 @@ def main():
             np.savetxt(f"{data_dir}/{count:04}.csv", data, delimiter=",")
 
             plt.plot(t, x)
+            plt.ylim(-y_max, y_max)
             plt.savefig(f"{fig_dir}/{count:04}.jpg")
             plt.cla()
 
