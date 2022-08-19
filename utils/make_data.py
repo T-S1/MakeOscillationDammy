@@ -36,13 +36,21 @@ def main():
 
     count = 0
 
+    n_total = 0
     y_max = 0
     for conf in confs:
+        n_data = conf["n_data"]
         amp_mus = conf["amp_mus"]
         amp_devs = conf["amp_devs"]
         y_max = max(y_max, np.sum(amp_mus + amp_devs * 3))
+        n_total += n_data
 
-    for conf in confs:
+    idxs = np.arange(n_total)
+    np.random.shuffle(idxs)
+    labels = np.zeros(n_total) - 1
+
+    # for conf in confs:
+    for i, conf in enumerate(confs):
         name = conf["name"]
         n_data = conf["n_data"]
         n_samp = conf["n_samp"]
@@ -75,15 +83,20 @@ def main():
             x += eps
 
             data = np.stack([t, x], axis=1)
-            np.savetxt(f"{data_dir}/{count:04}.csv", data, delimiter=",")
+            # np.savetxt(f"{data_dir}/{count:04}.csv", data, delimiter=",")
+            np.savetxt(f"{data_dir}/{idxs[count]:04}.csv", data, delimiter=",")
 
             plt.plot(t, x)
             plt.ylim(-y_max, y_max)
-            plt.savefig(f"{fig_dir}/{count:04}.jpg")
+            # plt.savefig(f"{fig_dir}/{count:04}.jpg")
+            plt.savefig(f"{fig_dir}/{idxs[count]:04}.jpg")
             plt.cla()
+
+            labels[idxs[count]] = i
 
             count += 1
 
+    np.savetxt("./data/example1_labels.txt", labels, fmt="%d")
     print("Done")
 
 
