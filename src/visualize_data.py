@@ -5,12 +5,28 @@ import matplotlib.pyplot as plt
 
 plt.rcParams['font.family'] = "Meiryo"
 
+if not os.path.isdir("./figures/fft_example2"):
+    os.makedirs("./figures/fft_example2")
 
-def show_peaks(t, x, peaks):
+
+def show_signal(t, x, name):
     fig = plt.figure()
-    plt.title("ピーク検出結果")
-    plt.xlabel("時刻(t)")
-    plt.ylabel("信号強度(x)")
+    plt.title(name)
+    plt.xlabel("時刻")
+    plt.ylabel("信号強度")
+    plt.xlim(t[0], t[-1])
+    plt.ylim(-2.5, 2.5)
+    plt.plot(t, x)
+    plt.show()
+
+
+def show_peaks(t, x, peaks, name):
+    fig = plt.figure()
+    plt.title(name)
+    plt.xlabel("時刻")
+    plt.ylabel("信号強度")
+    plt.xlim(t[0], t[-1])
+    plt.ylim(-2.5, 2.5)
     plt.plot(t, x)
     plt.plot(t[peaks], x[peaks], "x")
     plt.show()
@@ -75,6 +91,13 @@ def show_spectrum(f, spectrum):
     plt.show()
 
 
+def savefig_spectrum(idx, f, spectrum):
+    fig = plt.figure()
+    plt.plot(f, spectrum)
+    plt.savefig(f"./figures/fft_example2/{idx:04}.jpg")
+    plt.close()
+
+
 def show_fft_clusters(feats, labels, centers, colors=["r", "g", "b"]):
     n_clusters = len(centers)
     n_data = len(feats)
@@ -84,7 +107,7 @@ def show_fft_clusters(feats, labels, centers, colors=["r", "g", "b"]):
     plt.xlabel("データ番号")
     for i in range(n_clusters):
         idxs = np.arange(n_data)[labels == i]
-        dists = np.sqrt(np.sum((feats[idxs] - np.array([centers[i]]))**2, axis=1))
+        dists = np.sqrt(np.sum((feats[idxs, :] - np.array([centers[i]]))**2, axis=1))
         plt.bar(idxs, dists, color=colors[i], label=f"Cluster {i}")
     plt.legend()
     plt.show()
