@@ -3,10 +3,9 @@ import numpy as np
 from scipy import signal
 from sklearn.cluster import KMeans
 import pickle
-
-# 自作モジュール
-from src.visualize_data \
-    import show_signal, show_peaks, show_amp_clusters
+from src.visualize_data import (
+    show_signal, show_peaks, show_amp_clusters
+)   # 自作モジュール
 
 """データの読み込み"""
 n_data = 50         # データ数
