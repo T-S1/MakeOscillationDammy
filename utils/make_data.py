@@ -96,7 +96,7 @@ def main():
 
             count += 1
 
-    np.savetxt("./data/example1_labels.txt", labels, fmt="%d")
+    np.savetxt(f"./data/{dir_name}_labels.txt", labels, fmt="%d")
     print("Done")
 
 
