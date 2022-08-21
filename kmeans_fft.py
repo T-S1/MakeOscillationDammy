@@ -1,9 +1,10 @@
+"""モジュールのインポート"""
 import numpy as np
 from sklearn.cluster import KMeans
 import pickle
 from src.visualize_data import (
-    show_signal, show_spectrum, savefig_spectrum,
-    show_fft_clusters, show_fft_centers
+    show_signals, show_spectrums, show_all_spectrums,
+    show_fft_clusters, show_fft_centers, show_signals_with_cluster
 )   # 自作モジュール
 
 """データの読み込み"""
@@ -15,8 +16,8 @@ for i in range(n_data):
     data = np.loadtxt(f"./data/example2/{i:04}.csv", delimiter=",")
     t[i, :] = data[:, 0]    # 1列目が時刻のデータ
     x[i, :] = data[:, 1]    # 2列目が信号強度のデータ
-    if i % 10 == 0:         # 10回毎に表示
-        show_signal(t[i, :], x[i, :], f"{i:04}")    # データのグラフ表示
+
+show_signals(t, x)  # 読み込んだデータのグラフ表示
 
 """FFT"""
 df = 1 / (t[0, -1] - t[0, 0])       # 周波数の刻み幅
@@ -28,10 +29,8 @@ for i in range(len(x)):
     spectrum = spectrum[: n_samples // 2]
     feats[i, :] = spectrum
 
-    if i % 10 == 0:     # 10回毎に表示
-        show_spectrum(f, spectrum)  # パワースペクトル表示
-
-    savefig_spectrum(i, f, spectrum)    # FFT結果のグラフを保存
+show_spectrums(f, feats)        # パワースペクトルを2次元グラフで一部表示
+show_all_spectrums(f, feats)    # パワースペクトルを3次元グラフで全て表示
 
 """k-meansの実行"""
 n_clusters = 3
@@ -40,8 +39,9 @@ kmeans = KMeans(n_clusters, random_state=100).fit(feats)    # 学習
 centers = kmeans.cluster_centers_   # クラスタ中心
 labels = kmeans.labels_             # 各データが属するクラスタ
 
-show_fft_clusters(f, feats, labels)     # クラスタリング結果のグラフ
-show_fft_centers(f, centers)            # クラスタ中心のグラフ
+show_fft_clusters(f, feats, labels)         # クラスタリング結果のグラフ
+show_fft_centers(f, centers)                # クラスタ中心のグラフ
+show_signals_with_cluster(t, x, labels)     # 波形をクラスタで色分け表示
 
 with open("kmeans_model_2.pkl", "wb") as fp:
     pickle.dump(kmeans, fp)     # モデル保存
