@@ -1,6 +1,7 @@
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 plt.rcParams['font.family'] = "Meiryo"
@@ -32,7 +33,7 @@ def show_peaks(t, x, peaks, name):
     plt.show()
 
 
-def show_amp_clusters(ms, labels, centers, colors=["r", "g", "b"]):
+def show_amp_clusters(ms, labels, centers, colors=["r", "g", "y"]):
     n_data = len(ms)
     n_clusters = len(colors)
     fig = plt.figure()
@@ -43,6 +44,44 @@ def show_amp_clusters(ms, labels, centers, colors=["r", "g", "b"]):
         idxs = np.arange(n_data)[labels == cluster]
         plt.scatter(idxs, ms[idxs], c=colors[cluster])
         plt.hlines(centers[cluster], xmin=0, xmax=n_data)
+    plt.show()
+
+
+def show_spectrum(f, spectrum, y_max=160):
+    fig = plt.figure()
+    plt.ylim(0, y_max)
+    plt.plot(f, spectrum)
+    plt.show()
+
+
+def savefig_spectrum(idx, f, spectrum, y_max=160):
+    fig = plt.figure()
+    plt.ylim(0, y_max)
+    plt.plot(f, spectrum)
+    plt.savefig(f"./figures/fft_example2/{idx:04}.jpg")
+    plt.close()
+
+
+def show_fft_clusters(f, feats, labels, colors=["r", "g", "y"]):
+    fig = plt.figure()
+    ax = fig.add_subplot(111, projection='3d')
+    ax.set_xlabel("データ番号")
+    ax.set_ylabel("周波数")
+    ax.set_zlabel("パワー")
+    for i in range(len(feats)):
+        arr_i = np.ones_like(f) * i
+        ax.plot(arr_i, f, feats[i, :], color=colors[labels[i]])
+    plt.show()
+
+
+def show_fft_centers(f, centers, colors=["r", "g", "y"]):
+    n_clusters = len(centers)
+    fig, axs = plt.subplots(n_clusters, 1)
+    for i in range(n_clusters):
+        axs[i].set_ylabel("パワー")
+        axs[i].plot(f, centers[i], color=colors[i])
+    axs[0].set_title("クラスタ中心")
+    axs[-1].set_xlabel("周波数")
     plt.show()
 
 
@@ -76,49 +115,9 @@ class RT_Drawer():
 
         self.count += 1
 
-    def paint_span(self, t_start, t_end, label, colors=["r", "g", "b"]):
+    def paint_span(self, t_start, t_end, label, colors=["r", "g", "y"]):
         plt.axvspan(t_start, t_end, color=colors[label])
 
     def show(self):
         plt.xlim(self.t[0], self.t[-1])
-        plt.savefig("./figures/rt_ampmean.jpg")
         plt.show()
-
-
-def show_spectrum(f, spectrum):
-    fig = plt.figure()
-    plt.plot(f, spectrum)
-    plt.show()
-
-
-def savefig_spectrum(idx, f, spectrum):
-    fig = plt.figure()
-    plt.plot(f, spectrum)
-    plt.savefig(f"./figures/fft_example2/{idx:04}.jpg")
-    plt.close()
-
-
-def show_fft_clusters(feats, labels, centers, colors=["r", "g", "b"]):
-    n_clusters = len(centers)
-    n_data = len(feats)
-    fig = plt.figure()
-    plt.title("各データの属するクラスタ・中心との距離")
-    plt.ylabel("クラスタ中心までの距離")
-    plt.xlabel("データ番号")
-    for i in range(n_clusters):
-        idxs = np.arange(n_data)[labels == i]
-        dists = np.sqrt(np.sum((feats[idxs, :] - np.array([centers[i]]))**2, axis=1))
-        plt.bar(idxs, dists, color=colors[i], label=f"Cluster {i}")
-    plt.legend()
-    plt.show()
-
-
-def show_fft_centers(f, centers, colors=["r", "g", "b"]):
-    n_clusters = len(centers)
-    fig, axs = plt.subplots(n_clusters, 1)
-    plt.title("クラスタ中心")
-    for i in range(n_clusters):
-        axs[i].set_ylabel("パワー")
-        axs[i].plot(f, centers[i], color=colors[i])
-    axs[-1].set_xlabel("周波数")
-    plt.show()
