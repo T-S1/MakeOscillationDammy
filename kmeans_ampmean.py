@@ -33,8 +33,8 @@ for i in range(len(x)):
     if i % 8 == 0:     # 8回毎に表示
         print(f"データ{i:04}の平均値：{amp_mean}")  # 振幅平均の表示
 
-show_peaks(t, x, peaks_list)
-show_amp_means(amp_means)
+show_peaks(t, x, peaks_list)    # ピーク検出結果の表示
+show_amp_means(amp_means)       # 全データの代表値を表示
 
 """k-meansの実行"""
 n_clusters = 3  # クラスタ数
