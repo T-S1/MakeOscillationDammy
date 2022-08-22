@@ -4,7 +4,7 @@ from scipy import signal
 from sklearn.cluster import KMeans
 import pickle
 from src.visualize_data import (
-    show_signals, show_peaks, show_amp_means,
+    show_signals, show_peaks, show_amp_means, show_sses,
     show_amp_clusters, show_signals_with_cluster
 )   # 自作モジュール
 
@@ -33,13 +33,19 @@ for i in range(len(x)):
     if i % 8 == 0:     # 8回毎に表示
         print(f"データ{i:04}の平均値：{amp_mean}")  # 振幅平均の表示
 
-show_peaks(t, x, peaks_list)
-show_amp_means(amp_means)
+show_peaks(t, x, peaks_list)    # ピーク検出結果の表示
+show_amp_means(amp_means)       # 全データの代表値を表示
+
+"""エルボー法"""
+amp_means = amp_means.reshape(-1, 1)    # Kmeansの仕様に合わせる
+sses = np.zeros(10)     # SSEの値を格納する配列
+for n_clusters in range(1, 11):
+    kmeans = KMeans(n_clusters, random_state=100).fit(amp_means)    # k-meansモデルの学習
+    sses[n_clusters - 1] = kmeans.inertia_   # 誤差平方和（SSE）
+show_sses(sses)     # クラスタ数に応じるSSEの確認
 
 """k-meansの実行"""
 n_clusters = 3  # クラスタ数
-
-amp_means = amp_means.reshape(-1, 1)    # Kmeansの仕様に合わせる
 kmeans = KMeans(n_clusters, random_state=100).fit(amp_means)    # 学習
 centers = kmeans.cluster_centers_       # クラスタ中心
 labels = kmeans.labels_                 # 各データが属するクラスタ

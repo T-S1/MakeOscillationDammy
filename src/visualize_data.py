@@ -5,9 +5,6 @@ from mpl_toolkits.mplot3d import Axes3D
 
 plt.rcParams['font.family'] = "Meiryo"  # フォントの設定
 
-# if not os.path.isdir("./figures/fft_example2"):
-#     os.makedirs("./figures/fft_example2")
-
 
 def show_signals(t, x, step=8, n_rows=3, n_cols=2, y_max=2.5):
     fig, axs = plt.subplots(n_rows, n_cols, sharex=True, sharey=True)   # 複数グラフを表示する準備
@@ -45,6 +42,17 @@ def show_amp_means(amp_means):
     plt.ylabel("平均振幅")
     idxs = np.arange(n_data)
     plt.scatter(idxs, amp_means)
+    plt.show()
+
+
+def show_sses(sses):
+    n_clus_max = len(sses)
+    idxs = np.arange(1, n_clus_max + 1)
+    fig = plt.figure()
+    plt.title("クラスタ数によるSSEの変化")
+    plt.xlabel("クラスタ数")
+    plt.ylabel("SSE")
+    plt.plot(idxs, sses, marker="o")
     plt.show()
 
 
@@ -90,14 +98,6 @@ def show_spectrums(freq, spectrums, step=8, n_rows=3, n_cols=2, y_max=200):
     plt.show()
 
 
-# def savefig_spectrums(idx, f, spectrum, y_max=200):
-#     fig = plt.figure()
-#     plt.ylim(0, y_max)
-#     plt.plot(f, spectrum)
-#     plt.savefig(f"./figures/fft_example2/{idx:04}.jpg")
-#     plt.close()
-
-
 def show_all_spectrums(freq, spectrums):
     fig = plt.figure()
     ax = fig.add_subplot(111, projection='3d')
@@ -129,6 +129,7 @@ def show_fft_centers(f, centers, colors=["r", "g", "y"], y_max=200):
     for i in range(n_clusters):
         axs[i].set_ylabel("パワー")
         axs[i].plot(f, centers[i], color=colors[i])
+        axs[i].set_xlim(f[0], f[-1])
         axs[i].set_ylim(0, y_max)
     axs[-1].set_xlabel("周波数")
     plt.tight_layout()
@@ -137,9 +138,6 @@ def show_fft_centers(f, centers, colors=["r", "g", "y"], y_max=200):
 
 class RT_Drawer():
     def __init__(self, t, x, width=500, interval=32, y_max=3):
-
-        # if not os.path.isdir("./figures"):
-        #     os.makedirs("./figures")
 
         self.width = width
         self.interval = interval

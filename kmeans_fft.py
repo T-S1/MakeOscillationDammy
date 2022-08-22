@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 import pickle
 from src.visualize_data import (
-    show_signals, show_spectrums, show_all_spectrums,
+    show_signals, show_spectrums, show_all_spectrums, show_sses,
     show_fft_clusters, show_fft_centers, show_signals_with_cluster
 )   # 自作モジュール
 
@@ -31,6 +31,13 @@ for i in range(len(x)):
 
 show_spectrums(f, feats)        # パワースペクトルを2次元グラフで一部表示
 show_all_spectrums(f, feats)    # パワースペクトルを3次元グラフで全て表示
+
+"""エルボー法"""
+sses = np.zeros(10)     # SSEの値を格納する配列
+for n_clusters in range(1, 11):
+    kmeans = KMeans(n_clusters, random_state=100).fit(feats)    # k-meansモデルの学習
+    sses[n_clusters - 1] = kmeans.inertia_   # 誤差平方和（SSE）
+show_sses(sses)     # クラスタ数に応じるSSEの確認
 
 """k-meansの実行"""
 n_clusters = 3
